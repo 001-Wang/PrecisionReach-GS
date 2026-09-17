@@ -504,10 +504,16 @@ button, input, select { font: inherit; }
 .demo-viewer figcaption div span { color: var(--accent); font-size: .7rem; font-weight: 800; }
 .demo-viewer figcaption p { max-width: 500px; margin: 0; color: var(--muted); font-size: .8rem; text-align: right; }
 
-.context-demo { display: grid; grid-template-columns: minmax(0, .42fr) minmax(0, .58fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; margin-top: clamp(3rem, 7vw, 6rem); }
+.context-demo { margin-top: clamp(3rem, 7vw, 6rem); }
+.context-copy { display: grid; grid-template-columns: minmax(170px, .2fr) minmax(0, .48fr) minmax(280px, .32fr); gap: clamp(1.5rem, 4vw, 4rem); align-items: end; }
 .context-demo h3 { margin: 0; font-size: clamp(2rem, 4vw, 4rem); letter-spacing: -.055em; line-height: 1.02; }
-.context-demo p { color: var(--muted); }
-.context-demo video { max-height: 620px; object-fit: cover; border: 1px solid var(--line); background: #111; }
+.context-demo p { margin: 0; color: var(--muted); }
+.context-video-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: clamp(2rem, 4vw, 3.5rem); border: 1px solid var(--line); background: var(--line); }
+.context-video-pair figure { min-width: 0; margin: 0; background: #111; }
+.context-video-pair video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #050605; }
+.context-video-pair figcaption { display: flex; justify-content: space-between; gap: 1rem; padding: 1rem 1.2rem; border-top: 1px solid var(--line); background: var(--ink); }
+.context-video-pair figcaption strong { font-size: .82rem; }
+.context-video-pair figcaption span { color: var(--muted); font-size: .7rem; letter-spacing: .04em; text-transform: uppercase; }
 
 .representation-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; border: 1px solid var(--dark-line); background: var(--dark-line); }
 .representation-grid figure { margin: 0; background: #fff; }
@@ -636,7 +642,8 @@ footer a:last-child:hover { color: var(--accent); }
   .demo-selector button:last-child { border-right: 0; }
   .demo-viewer figcaption { flex-direction: column; }
   .demo-viewer figcaption p { text-align: left; }
-  .context-demo { grid-template-columns: 1fr; }
+  .context-copy { grid-template-columns: 1fr; align-items: start; }
+  .context-video-pair { grid-template-columns: 1fr; }
   .representation-grid { grid-template-columns: 1fr; }
   .resource-links { grid-template-columns: 1fr; }
   .code-release { grid-template-columns: 1fr; }

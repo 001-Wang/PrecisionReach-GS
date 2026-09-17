@@ -217,12 +217,21 @@
       </div>
 
       <div class="context-demo">
-        <div>
+        <div class="context-copy">
           <span class="micro-label">Low-context start</span>
           <h3>The first wrist image can contain only the table surface.</h3>
           <p>With 1,500 generated trajectories, the policy recovers the target neighborhood in 17 of 30 trials even when the motherboard begins outside the wrist camera’s field of view.</p>
         </div>
-        <video autoplay muted loop playsinline controls preload="metadata" src="assets/videos/low-context.mp4" aria-label="Wrist camera beginning with only the table surface visible before recovering the target"></video>
+        <div class="context-video-pair" aria-label="Side-by-side external and wrist-camera views of the low-context experiment">
+          <figure>
+            <video autoplay muted loop playsinline controls preload="metadata" src="assets/videos/low-context-robot.mp4" aria-label="External robot view of the low-context recovery experiment"></video>
+            <figcaption><strong>Robot view</strong><span>External camera · 6×</span></figcaption>
+          </figure>
+          <figure>
+            <video autoplay muted loop playsinline controls preload="metadata" src="assets/videos/low-context.mp4" aria-label="Wrist camera beginning with only the table surface visible before recovering the target"></video>
+            <figcaption><strong>Wrist-camera view</strong><span>Policy observation</span></figcaption>
+          </figure>
+        </div>
       </div>
     </section>
 
