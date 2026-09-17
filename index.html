@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0c0b">
+  <meta name="description" content="PrecisionReach-GS uses robot-aligned 3D Gaussian Splatting to generate scalable wrist-camera demonstrations for precise VLA reaching.">
+  <title>PrecisionReach-GS | Robot-Aligned 3DGS for Precise VLA Reaching</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="scroll-progress" aria-hidden="true"><span id="scroll-progress"></span></div>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="PrecisionReach-GS home">
+      <span class="brand-mark">PR</span>
+      <span>PrecisionReach-GS</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" aria-label="Main navigation">
+      <a href="#overview">Overview</a>
+      <a href="#method">Method</a>
+      <a href="#results">Results</a>
+      <a href="#demos">Demos</a>
+      <a href="#resources">Resources</a>
+      <a class="nav-repo" href="https://github.com/001-Wang/PrecisionReach-GS" target="_blank" rel="noreferrer">GitHub</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero-copy">
+        <p class="eyebrow">Robot learning / 3D Gaussian Splatting</p>
+        <h1><span>PrecisionReach</span><strong>-GS</strong></h1>
+        <p class="hero-title">Robot-Aligned 3D Gaussian Splatting for Precise Reaching with Wrist-Camera VLA Policies</p>
+        <p class="hero-summary">A lightweight real-to-sim-to-real pipeline that turns one reconstructed workspace into scalable, robot-aligned wrist-camera demonstrations for precise pre-contact reaching.</p>
+        <div class="author-line">
+          <span>Zuoxu Wang</span>
+          <span>Texas A&amp;M University</span>
+        </div>
+        <div class="hero-actions">
+          <a class="button button-primary" href="assets/precisionreach-gs-paper.pdf">Read the paper <span aria-hidden="true">↗</span></a>
+          <a class="button button-ghost" href="https://github.com/001-Wang/PrecisionReach-GS" target="_blank" rel="noreferrer">Project repository <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+
+      <figure class="hero-media">
+        <video autoplay muted loop playsinline preload="metadata" src="assets/videos/gpu-reach.mp4" aria-label="Franka robot performing a precise reach toward a GPU on a motherboard"></video>
+        <figcaption>
+          <span>Real-robot deployment</span>
+          <span>Wrist-camera policy · 16× playback</span>
+        </figcaption>
+      </figure>
+
+      <div class="hero-index" aria-hidden="true">01</div>
+    </section>
+
+    <section class="metric-rail" aria-label="Key results">
+      <div><strong>1,500</strong><span>generated trajectories</span></div>
+      <div><strong>&lt;10 min</strong><span>active human capture</span></div>
+      <div><strong>0.235</strong><span>generated RMS jerk</span></div>
+      <div><strong>80%</strong><span>π<sub>0.5</sub> precise reach at 1,500 trajectories</span></div>
+    </section>
+
+    <section class="section section-light" id="overview">
+      <div class="section-kicker"><span>01</span><span>The problem</span></div>
+      <div class="section-heading split-heading">
+        <h2>Precise reaching needs better data, not a heavier simulator.</h2>
+        <p>Dense electronic assemblies leave little room for camera-action mismatch. Teleoperation is slow and noisy, while full digital twins demand meshes, collision geometry, contact models, and extensive setup.</p>
+      </div>
+
+      <div class="abstract-layout">
+        <div class="abstract-aside">
+          <p class="aside-label">Research question</p>
+          <p>Can a lightweight 3DGS reconstruction train a wrist-camera VLA policy to reach small targets precisely?</p>
+        </div>
+        <details open>
+          <summary>Abstract</summary>
+          <p>Efficient robotic data collection remains a major bottleneck for vision-language-action policy learning, especially when tasks require accurate end-effector positioning and reliable camera-action alignment. PrecisionReach-GS focuses on the pre-contact reaching stage and reconstructs the real workspace with 3D Gaussian Splatting. It renders diverse wrist-camera observations from robot-aligned poses, pairs them with smooth reaching trajectories, and uses the resulting data to fine-tune VLA policies.</p>
+          <p>Experiments in motherboard disassembly show precise wrist-camera-only reaching without requiring an external side-view camera in this task setting. The pipeline reduces active human collection effort, produces smoother supervision, and avoids building a complete physical digital twin.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="section section-dark" id="method">
+      <div class="section-kicker"><span>02</span><span>Method</span></div>
+      <div class="section-heading">
+        <h2>From a real workspace to robot-aligned supervision.</h2>
+        <p>The method reconstructs the scene once, aligns it with the robot frame, then renders visual-action pairs along feasible reaching trajectories.</p>
+      </div>
+
+      <a class="workflow-figure" href="assets/images/workflow.png" target="_blank" rel="noreferrer">
+        <img src="assets/images/workflow.png" alt="PrecisionReach-GS pipeline from real-world capture through robot-aligned 3DGS data generation to VLA fine-tuning and real-robot deployment">
+        <span>Open full-resolution workflow <b aria-hidden="true">↗</b></span>
+      </a>
+
+      <div class="steps">
+        <article>
+          <span class="step-number">01</span>
+          <h3>Capture and reconstruct</h3>
+          <p>Short real-world captures preserve the workspace appearance, clutter, and target layout in a photorealistic 3DGS scene.</p>
+        </article>
+        <article>
+          <span class="step-number">02</span>
+          <h3>Align and generate</h3>
+          <p>A weighted similarity transform maps the reconstruction into the robot frame. Feasible start poses and smooth trajectories produce synchronized wrist views, states, and actions.</p>
+        </article>
+        <article>
+          <span class="step-number">03</span>
+          <h3>Fine-tune and reach</h3>
+          <p>The VLA policy predicts closed-loop reach actions from wrist images and language instructions. A lightweight verifier decides when the target region has been reached.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section generation-section" aria-labelledby="generation-title">
+      <div class="section-kicker"><span>03</span><span>Data engine</span></div>
+      <div class="section-heading split-heading">
+        <h2 id="generation-title">The reconstructed workspace becomes a camera-action generator.</h2>
+        <p>Camera motion stays tied to feasible end-effector motion, so every rendered wrist observation receives a matching robot-frame action label.</p>
+      </div>
+
+      <div class="generation-grid">
+        <figure class="video-panel video-panel-wide">
+          <video autoplay muted loop playsinline controls preload="metadata" src="assets/videos/data-generation.mp4" aria-label="PrecisionReach-GS data generation interface and rendered workspace"></video>
+          <figcaption><strong>Robot-aligned generation</strong><span>Pose sampling, rendering, and trajectory export in one workflow</span></figcaption>
+        </figure>
+        <figure class="video-panel">
+          <video autoplay muted loop playsinline preload="metadata" src="assets/videos/scene-orbit.mp4" aria-label="Orbiting view of the reconstructed motherboard workspace"></video>
+          <figcaption><strong>Scene-scale view</strong><span>Photorealistic workspace reconstruction</span></figcaption>
+        </figure>
+        <figure class="video-panel">
+          <video autoplay muted loop playsinline preload="metadata" src="assets/videos/wrist-render.mp4" aria-label="Rendered wrist-camera view of the motherboard"></video>
+          <figcaption><strong>Policy view</strong><span>Rendered observations from robot-feasible wrist poses</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section section-light" id="results">
+      <div class="section-kicker"><span>04</span><span>Quantitative results</span></div>
+      <div class="section-heading">
+        <h2>More generated data produces more precise real-robot reaches.</h2>
+        <p>Tests use a physically repositioned motherboard, so the policy must tolerate moderate target-location changes rather than replay a fixed pose.</p>
+      </div>
+
+      <div class="results-layout">
+        <div class="chart-card">
+          <div class="chart-toolbar">
+            <div>
+              <span class="chart-label">Average precise-reach success</span>
+              <strong id="chart-title">π<sub>0.5</sub></strong>
+            </div>
+            <div class="segmented-control" role="group" aria-label="Choose policy backbone">
+              <button type="button" class="is-active" data-policy="pi05" aria-pressed="true">π<sub>0.5</sub></button>
+              <button type="button" data-policy="openvla" aria-pressed="false">OpenVLA-OFT</button>
+            </div>
+          </div>
+          <div class="bar-chart" id="bar-chart" role="img" aria-label="Average precise reaching success by training data scale"></div>
+          <div class="chart-legend"><span><i class="teleop"></i>Teleoperation</span><span><i class="generated"></i>PrecisionReach-GS</span></div>
+          <p class="chart-note">Each value averages screw, GPU, and RAM results. Every target uses 25 real-robot trials.</p>
+        </div>
+
+        <div class="result-notes">
+          <article>
+            <span class="result-value">21 / 25</span>
+            <h3>Screw precise reach</h3>
+            <p>π<sub>0.5</sub> trained with 1,500 generated trajectories.</p>
+          </article>
+          <article>
+            <span class="result-value">19 / 25</span>
+            <h3>GPU precise reach</h3>
+            <p>The target requires more wrist rotation near the interaction pose.</p>
+          </article>
+          <article>
+            <span class="result-value">20 / 25</span>
+            <h3>RAM precise reach</h3>
+            <p>Wrist-camera-only deployment in a repositioned workspace.</p>
+          </article>
+        </div>
+      </div>
+
+      <a class="performance-figure" href="assets/images/performance.png" target="_blank" rel="noreferrer">
+        <img src="assets/images/performance.png" alt="Real-robot coarse and precise reaching performance for Pi 0.5 and OpenVLA-OFT across teleoperation and PrecisionReach-GS data scales">
+        <span>Real-robot performance by data scale <b aria-hidden="true">↗</b></span>
+      </a>
+
+      <div class="evidence-strip">
+        <div><strong>29 / 30</strong><span>precise reaches from full-context initial views</span></div>
+        <div><strong>27 / 30</strong><span>precise reaches from limited-context initial views</span></div>
+        <div><strong>17 / 30</strong><span>coarse recovery when the board starts out of view</span></div>
+        <div><strong>58.7%</strong><span>precise success with the full 900-trajectory pipeline</span></div>
+      </div>
+    </section>
+
+    <section class="section section-dark" id="demos">
+      <div class="section-kicker"><span>05</span><span>Real-robot demos</span></div>
+      <div class="section-heading split-heading">
+        <h2>Precise reaching after the motherboard moves.</h2>
+        <p>Select a target to watch the wrist-camera VLA policy close the loop on a physical Franka robot. Videos play at 16× speed.</p>
+      </div>
+
+      <div class="demo-console">
+        <div class="demo-selector" role="tablist" aria-label="Choose a reaching target">
+          <button type="button" class="is-active" role="tab" aria-selected="true" data-demo="gpu">GPU <span>01</span></button>
+          <button type="button" role="tab" aria-selected="false" data-demo="screw">Screw <span>02</span></button>
+          <button type="button" role="tab" aria-selected="false" data-demo="ram">RAM <span>03</span></button>
+        </div>
+        <figure class="demo-viewer">
+          <video id="demo-video" autoplay muted loop playsinline controls preload="metadata" src="assets/videos/gpu-reach.mp4"></video>
+          <figcaption>
+            <div><span id="demo-index">01</span><strong id="demo-title">GPU precise reach</strong></div>
+            <p id="demo-copy">Closed-loop reaching under a changed target-board location.</p>
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="context-demo">
+        <div>
+          <span class="micro-label">Low-context start</span>
+          <h3>The first wrist image can contain only the table surface.</h3>
+          <p>With 1,500 generated trajectories, the policy recovers the target neighborhood in 17 of 30 trials even when the motherboard begins outside the wrist camera’s field of view.</p>
+        </div>
+        <video autoplay muted loop playsinline controls preload="metadata" src="assets/videos/low-context.mp4" aria-label="Wrist camera beginning with only the table surface visible before recovering the target"></video>
+      </div>
+    </section>
+
+    <section class="section representation-section">
+      <div class="section-kicker"><span>06</span><span>Why 3DGS</span></div>
+      <div class="section-heading">
+        <h2>Visual realism without an object-level digital twin.</h2>
+        <p>Targets, clutter, and workspace appearance remain visible in the Gaussian representation, while conventional mesh reconstruction struggles with thin and reflective components.</p>
+      </div>
+      <div class="representation-grid">
+        <figure>
+          <img src="assets/images/render-3dgs.png" alt="3D Gaussian Splatting rendering of the motherboard workspace">
+          <figcaption><span>3DGS</span><strong>Dense visual context</strong></figcaption>
+        </figure>
+        <figure>
+          <img src="assets/images/render-mesh.png" alt="Mesh reconstruction of the same motherboard workspace with missing geometry">
+          <figcaption><span>Mesh</span><strong>Incomplete thin geometry</strong></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section resource-section" id="resources">
+      <div class="section-kicker"><span>07</span><span>Resources</span></div>
+      <div class="resource-heading">
+        <h2>Build on PrecisionReach-GS.</h2>
+        <p>The project repository hosts this page and the current manuscript. Implementation release details will be added as the research code is prepared.</p>
+      </div>
+      <div class="resource-links">
+        <a href="assets/precisionreach-gs-paper.pdf"><span>Paper PDF</span><b aria-hidden="true">↗</b></a>
+        <a href="https://github.com/001-Wang/PrecisionReach-GS" target="_blank" rel="noreferrer"><span>GitHub repository</span><b aria-hidden="true">↗</b></a>
+        <button type="button" id="copy-citation"><span>Copy BibTeX</span><b>Copy</b></button>
+      </div>
+      <pre id="bibtex"><code>@unpublished{wang_precisionreach_gs,
+  title  = {Robot-Aligned 3D Gaussian Splatting for Precise Reaching
+            with Wrist-Camera VLA Policies},
+  author = {Wang, Zuoxu},
+  note   = {Manuscript under review},
+  url    = {https://github.com/001-Wang/PrecisionReach-GS}
+}</code></pre>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand" href="#top"><span class="brand-mark">PR</span><span>PrecisionReach-GS</span></a>
+    <p>Zuoxu Wang · Texas A&amp;M University</p>
+    <a href="#top">Back to top <span aria-hidden="true">↑</span></a>
+  </footer>
+</body>
+</html>

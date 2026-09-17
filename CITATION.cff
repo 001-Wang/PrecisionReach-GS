@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this project, please cite the manuscript."
+title: "Robot-Aligned 3D Gaussian Splatting for Precise Reaching with Wrist-Camera VLA Policies"
+type: article
+authors:
+  - family-names: Wang
+    given-names: Zuoxu
+repository-code: "https://github.com/001-Wang/PrecisionReach-GS"
+url: "https://001-wang.github.io/PrecisionReach-GS/"
