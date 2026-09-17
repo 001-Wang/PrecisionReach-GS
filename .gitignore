@@ -1,0 +1,23 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+.DS_Store
+Thumbs.db
+
+# Large generated data and models
+results/
+datasets/
+data/
+*.splat
+*.ksplat
+*.ply
+*.pt
+*.pth
+*.ckpt
+*.db
+*.webm
+*_ee_poses.json
+*_ee_poses.csv

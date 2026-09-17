@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GS Robot Side Viewer</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #090909;
+      color: #f4f4f4;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    #canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+    }
+
+    #panel {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      width: min(460px, calc(100vw - 24px));
+      max-height: calc(100vh - 24px);
+      box-sizing: border-box;
+      padding: 12px;
+      background: rgba(12, 14, 16, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      backdrop-filter: blur(8px);
+      display: grid;
+      gap: 10px;
+    }
+
+    #panel h1 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    button,
+    label.file {
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: #242a30;
+      color: #f4f4f4;
+      border-radius: 6px;
+      padding: 7px 9px;
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    button:hover,
+    label.file:hover {
+      background: #303840;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    #poseText {
+      width: 100%;
+      height: 320px;
+      box-sizing: border-box;
+      resize: vertical;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 6px;
+      padding: 8px;
+      color: #dfe8ee;
+      background: rgba(0, 0, 0, 0.45);
+      font-family: Consolas, "Liberation Mono", monospace;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    input.number {
+      width: 70px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(0, 0, 0, 0.35);
+      color: #f4f4f4;
+      border-radius: 6px;
+      padding: 7px 8px;
+      font: inherit;
+      font-size: 12px;
+    }
+
+    label.compact {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: #dce6ee;
+      font-size: 12px;
+    }
+
+    select {
+      min-width: 170px;
+      max-width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(0, 0, 0, 0.35);
+      color: #f4f4f4;
+      border-radius: 6px;
+      padding: 7px 8px;
+      font: inherit;
+      font-size: 12px;
+    }
+
+    #trajectoryMode {
+      min-width: 90px;
+    }
+
+    #keyframeCount {
+      color: #dce6ee;
+      font-size: 12px;
+      min-width: 74px;
+    }
+
+    #hud {
+      position: fixed;
+      right: 12px;
+      bottom: 12px;
+      display: flex;
+      gap: 10px;
+      color: #fff;
+      font-size: 13px;
+      text-shadow: 0 1px 3px #000;
+    }
+
+    #spinner {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      width: 44px;
+      height: 44px;
+      margin-left: -22px;
+      margin-top: -22px;
+      border: 4px solid rgba(255, 255, 255, 0.22);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #progress {
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 3px;
+      width: 0;
+      background: #61d394;
+    }
+
+    #message,
+    #status {
+      color: #c5d0d8;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div id="progress"></div>
+  <div id="spinner"></div>
+
+  <section id="panel">
+    <h1 id="title">GS Dual Viewer</h1>
+    <div class="row">
+      <label class="file">Load PLY/SPLAT<input id="splatInput" type="file" accept=".ply,.splat,.compressed.ply,application/octet-stream" /></label>
+      <label class="file">Load Alignment<input id="alignmentInput" type="file" accept=".json" /></label>
+      <button id="savePose" type="button">Save Pose</button>
+      <button id="saveShotPose" type="button">Save Shot + Pose</button>
+      <button id="copyPose" type="button">Copy Pose</button>
+    </div>
+    <div class="row">
+      <button id="addKeyframe" type="button">Add Keyframe</button>
+      <button id="clearKeyframes" type="button">Clear</button>
+      <button id="savePath" type="button">Save Path</button>
+      <label class="file">Load Path<input id="pathInput" type="file" accept=".json,application/json" /></label>
+      <button id="outputDir" type="button">Output Folder</button>
+      <button id="playPath" type="button">Play</button>
+      <button id="recordPath" type="button">Record WebM + EE Poses</button>
+      <button id="buildAutoPath" type="button">Build Workspace Sweep</button>
+      <button id="recordAutoPath" type="button">Record Start + Path</button>
+      <button id="recordBatchStarts" type="button">Batch Starts</button>
+      <button id="stopRecord" type="button">Stop</button>
+      <label class="compact">motion
+        <select id="trajectoryMode" title="Smooth eases at every waypoint; Linear moves at a constant rate within each segment">
+          <option value="smooth">Smooth</option>
+          <option value="linear">Linear (no easing)</option>
+        </select>
+      </label>
+      <label class="compact">clips <input id="batchStartCount" class="number" type="number" min="1" max="200" step="1" value="50" title="Number of start poses to record" /></label>
+      <label class="compact">sec <input id="pathDuration" class="number" type="number" min="0.1" step="0.1" value="10" title="Duration in seconds for each clip" /></label>
+      <span id="keyframeCount">0 keyframes</span>
+    </div>
+    <div class="row">
+      <select id="trainViewSelect" title="Training image camera pose"></select>
+      <button id="gotoTrainView" type="button">Go To Train Pose</button>
+      <button id="addTrainView" type="button">Add Train Pose</button>
+      <button id="findEe" type="button">Find EE Marker</button>
+      <button id="frameRobot" type="button">Frame Robot</button>
+      <button id="checkReachability" type="button">Check Reachability</button>
+      <button id="toggleFr3Mesh" type="button">Show Static Wire</button>
+    </div>
+    <div class="row">
+      <select id="savedPoseSelect" title="Saved path keyframe pose"></select>
+      <button id="gotoSavedPose" type="button">Go To Saved Pose</button>
+      <button id="addSavedPose" type="button">Add Saved Pose</button>
+    </div>
+    <div id="status">Add keyframes to show camera frustums and trajectory in the side view. Move: WASD, Q/E down/up, arrows rotate. F keyframe, T play, Y record.</div>
+    <textarea id="poseText" spellcheck="false"></textarea>
+    <div id="message"></div>
+  </section>
+
+  <div id="hud">
+    <span id="fps"></span>
+    <span id="camid"></span>
+  </div>
+
+  <script src="main.js?v=trajectory_mode_linear_v1"></script>
+</body>
+</html>

@@ -248,7 +248,24 @@
       <div class="section-kicker"><span>07</span><span>Resources</span></div>
       <div class="resource-heading">
         <h2>Build on PrecisionReach-GS.</h2>
-        <p>The project repository hosts this page and the current manuscript. Implementation release details will be added as the research code is prepared.</p>
+        <p>The repository includes the robot-frame alignment, dataset preparation, trajectory conversion, and browser-based Gaussian Splat data-generation tools used by the pipeline. Large datasets and trained models remain external.</p>
+      </div>
+      <div class="code-release" aria-label="Released code components">
+        <article>
+          <span>01 / ALIGN</span>
+          <h3>Robot-frame calibration</h3>
+          <p>Fit a weighted COLMAP-to-robot similarity transform and export aligned camera poses for the viewer.</p>
+        </article>
+        <article>
+          <span>02 / PREPARE</span>
+          <h3>3DGS dataset tools</h3>
+          <p>Prepare robot-pose-aware inputs and convert recorded camera paths into end-effector supervision.</p>
+        </article>
+        <article>
+          <span>03 / GENERATE</span>
+          <h3>Dual-view GS viewer</h3>
+          <p>Inspect aligned splats, sample reachable starts, build paths, and record synchronized visual-action data.</p>
+        </article>
       </div>
       <div class="resource-links">
         <a href="assets/precisionreach-gs-paper.pdf"><span>Paper PDF</span><b aria-hidden="true">↗</b></a>
