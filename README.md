@@ -2,6 +2,8 @@
 
 Official project page and selected research code for **Robot-Aligned 3D Gaussian Splatting for Precise Reaching with Wrist-Camera VLA Policies**.
 
+**Authors:** Zuoxu Wang and Xiao Liang · Texas A&M University
+
 [Project page](https://001-wang.github.io/PrecisionReach-GS/) · [Paper PDF](assets/precisionreach-gs-paper.pdf)
 
 PrecisionReach-GS is a lightweight real-to-sim-to-real pipeline for data-efficient VLA adaptation. It reconstructs a real workspace with 3D Gaussian Splatting, aligns the representation with the robot frame, and generates synchronized wrist-camera observations and smooth reaching actions.
@@ -97,7 +99,7 @@ Load the trained `.splat` or `.ply`, then load the generated `alignment.json`. T
 @unpublished{wang_precisionreach_gs,
   title  = {Robot-Aligned 3D Gaussian Splatting for Precise Reaching
             with Wrist-Camera VLA Policies},
-  author = {Wang, Zuoxu},
+  author = {Wang, Zuoxu and Liang, Xiao},
   note   = {Manuscript under review},
   url    = {https://github.com/001-Wang/PrecisionReach-GS}
 }
