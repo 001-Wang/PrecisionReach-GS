@@ -2,7 +2,9 @@
 
 Official project page and selected research code for **Robot-Aligned 3D Gaussian Splatting for Precise Reaching with Wrist-Camera VLA Policies**.
 
-**Authors:** Zuoxu Wang and Xiao Liang · Texas A&M University
+**Authors:** Zuoxu Wang and Xiao Liang<sup>*</sup> · Texas A&M University
+
+<sup>*</sup> Corresponding author
 
 [Project page](https://001-wang.github.io/PrecisionReach-GS/) · [Paper PDF](assets/precisionreach-gs-paper.pdf)
 
